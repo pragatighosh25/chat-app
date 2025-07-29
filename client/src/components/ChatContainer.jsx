@@ -1,7 +1,11 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import assets, { messagesDummyData } from '../assets/assets'
 
 const ChatContainer = ({ selectedUser, setSelectedUser }) => {
+  const scrollEnd = useRef();
+  useEffect(() => {
+    if(scrollEnd.current){scrollEnd.current.scrollIntoView({ behavior: 'smooth' })}
+  }, []);
   return selectedUser ? (
     <div className='h-full overflow-scroll relative backdrop-blur-lg'>
       {/*-------- Header -------- */}
@@ -27,9 +31,11 @@ const ChatContainer = ({ selectedUser, setSelectedUser }) => {
             )}
             <div className='text-center text-xs'>
               <img src={message.senderId === '680f5116f10f3cd28382ed02' ? assets.avatar_icon : assets.profile_martin} alt="" className='w-7 rounded-full' />
+              <p className='text-gray-500'>{message.createdAt}</p>
             </div>
           </div>
         ))}
+        <div ref={scrollEnd}></div>
       </div>
     </div>
   ):(
