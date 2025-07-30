@@ -9,6 +9,17 @@ const Login = () => {
   const [bio, setBio] = useState('')
   const [isDataSubmitted, setIsDataSubmitted] = useState(false)
 
+  const onSubmitHandler = (e) => {
+    e.preventDefault()
+    if (currentState === 'Sign Up' && !isDataSubmitted) {
+      setIsDataSubmitted(true)
+      return
+    } else {
+      // Handle login logic
+      console.log('Logging in:', { email, password })
+    }
+    setIsDataSubmitted(true)
+  }
 
   return (
     <div className='min-h-screen bg-cover flex items-center gap-8 justify-center sm:justify-evenly max-sm:flex-col backdrop-blur-2xl'>
@@ -17,9 +28,9 @@ const Login = () => {
       <img src={assets.logo_big} alt="logo" className='w-[min(30vw,250px)]' />
 
       {/* -------- right side -------- */}
-      <form className='border-2 bg-white/8 text-white border-gray-500 p-6 flex flex-col gap-6 rounded-lg shadow-lg'>
+      <form onSubmit={onSubmitHandler} className='border-2 bg-white/8 text-white border-gray-500 p-6 flex flex-col gap-6 rounded-lg shadow-lg'>
         <h2 className='font-medium text-2xl flex justify-between items-center'>{currentState}
-          <img src={assets.arrow_icon} alt="" className='w-5 cursor-pointer' />
+          {isDataSubmitted && <img onClick={()=> setIsDataSubmitted(false)} src={assets.arrow_icon} alt="" className='w-5 cursor-pointer' />}
         </h2>
         {currentState === 'Sign Up' && !isDataSubmitted && (
           <input onChange={(e) => setFullname(e.target.value)} value={fullname}
@@ -50,9 +61,9 @@ const Login = () => {
 
         <div className=''>
           {currentState === 'Sign Up' ? (
-            <p className='text-sm text-gray-500'>Already have an account? <span className='text-blue-500 cursor-pointer' onClick={() => setCurrentState('Login')}>Login</span></p>
+            <p className='text-sm text-gray-600'>Already have an account? <span className='text-violet-500 cursor-pointer font-medium' onClick={() => { setCurrentState('Login'); setIsDataSubmitted(false); }}>Login</span></p>
           ) : (
-            <p className='text-sm text-gray-500'>Don't have an account? <span className='text-blue-500 cursor-pointer' onClick={() => setCurrentState('Sign Up')}>Sign Up</span></p>
+            <p className='text-sm text-gray-600'>Don't have an account? <span className='text-violet-500 cursor-pointer font-medium' onClick={() => { setCurrentState('Sign Up'); setIsDataSubmitted(false); }}>Sign Up</span></p>
           )}
         </div>
       </form>
