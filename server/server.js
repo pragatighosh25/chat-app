@@ -19,8 +19,13 @@ app.get('/api/status', (req, res) => {
     res.send('Server is running');
 });
 
+import { connectDB } from './lib/db.js';
+//connect to the database
+await connectDB();
+
 //port
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT} http://localhost:${PORT}`);
 });
+
