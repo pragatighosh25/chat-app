@@ -67,14 +67,12 @@ export const login = async (req, res) => {
 
 //controller  to check if user is authenticated
 export const isAuthenticated = async (req, res) => {
-  try {
     const user = req.user; // user is set by authMiddleware
-    if (!user) {
-      return res.status(401).json({ success: false, message: "Unauthorized" });
-    }
     return res.json({ success: true, user });
-  } catch (error) {
-    console.error("Error in isAuthenticated:", error.message);
-    return res.status(500).json({ success: false, message: "Internal server error" });
-  }
+}
+
+//controller to get user profile
+export const getUserProfile = async (req, res) => {
+    const user = req.user; // user is set by authMiddleware
+    return res.json({ success: true, user });
 }
