@@ -1,4 +1,5 @@
-import User from "../models/user.models";
+import { generateToken } from "../lib/utils.js";
+import User from "../models/user.models.js";
 import bcrypt from "bcryptjs";
 
 //signup a new user
@@ -27,10 +28,41 @@ export const signup = async (req, res) => {
       password: hashedPassword,
       bio
     });
-    
+    const token = generateToken(newUser._id);
+
     await newUser.save();
-    return res.status(201).json({ message: "User created successfully" });
+    return res.json({ success: true, token, userData: newUser, message: "User created successfully" });
   } catch (error) {
-    return res.status(500).json({ message: "Internal server error" });
+    console.error("Error during signup:", error.message);
+    return res.json({ success: false, message: "Internal server error" });
   }
 }
+
+//login a user
+export const login = async (req, res) => {
+  try {
+    //get user data from request body
+    const { email, password } = req.body;
+    const userData = await User.findOne({ email });
+
+    if (!userData) {
+      return res.json({ success: false, message: "Invalid email or password" });
+    }
+
+  // Check if password is correct
+  const isPasswordCorrect = await bcrypt.compare(password, userData.password);
+  if (!isPasswordCorrect) {
+    return res.json({ success: false, message: "Invalid email or password" });
+  }
+  // Generate token and respond
+  const token = generateToken(userData._id);
+
+  //return user data and token
+  return res.json({ success: true, token, userData, message: "Login successful" });
+  } catch (error) {
+  console.error("Error during login:", error.message);
+  return res.json({ success: false, message: "Internal server error" });
+ }
+}
+
+//
