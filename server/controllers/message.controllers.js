@@ -32,3 +32,28 @@ export const getUsersForChat = async (req, res) => {
     return res.json({ success: false, message: "Internal server error" });
   }
 }
+
+//get all messages for selected user
+export const getMessages = async (req, res) => {
+  try {
+    const { id: selectedUserId } = req.params;
+    const myId = req.user._id;
+
+    // Fetch messages between the current user and the selected user
+    const messages = await Message.find({
+      $or: [
+        { senderId: myId, receiverId: selectedUserId },
+        { senderId: selectedUserId, receiverId: myId }
+      ]
+    });
+    await Message.updateMany(
+      { senderId: selectedUserId, receiverId: myId },
+      { seen: true }
+    );
+
+    return res.json({ success: true, messages });
+  } catch (error) {
+    console.error("Error fetching messages:", error.message);
+    return res.json({ success: false, message: "Internal server error" });
+  }
+}
