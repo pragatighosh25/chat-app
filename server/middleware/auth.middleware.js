@@ -1,6 +1,6 @@
 //middleware to protect routes
 import jwt from "jsonwebtoken";
-import User from "../models/user.models.js";
+import User from "../models/user.model.js";
 
 export const authMiddleware = async (req, res, next) => {
   try {
