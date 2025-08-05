@@ -14,14 +14,18 @@ app.use(cors({
     credentials: true
 }));
 
+import userRouter from './routes/user.routes.js';
+import messageRouter from './routes/message.routes.js';
+
 //routes
 app.get('/api/status', (req, res) => {
     res.send('Server is running');
 });
 app.use('/api/auth', userRouter);
+app.use('/api/messages', messageRouter);
 
 import { connectDB } from './lib/db.js';
-import userRouter from './routes/user.routes.js';
+
 //connect to the database
 await connectDB();
 

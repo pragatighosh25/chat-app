@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import User from '../models/user.model.js';
 import { generateToken } from '../lib/jwt.js';
 import Message from '../models/messages.model.js';
+import cloudinary from '../lib/cloudinary.js'
 
 //get all users except the logged-in user
 
@@ -71,5 +72,34 @@ export const markMessagesAsSeen = async (req, res) => {
   } catch (error) {
     console.error("Error marking messages as seen:", error.message);
     return res.json({ success: false, message: "Internal server error" });
+  }
+}
+
+//send message to selected user
+export const sendMessage = async (req, res) => {
+  try {
+    const {text, image}= req.body;
+    const { id: receiverId } = req.params;
+    const senderId = req.user._id;
+    //upload image to cloudinary if provided
+    let imageUrl;
+    if(image) {
+      const uploadResponse = await cloudinary.uploader.upload(image)
+      imageUrl = uploadResponse.secure_url;
+    }
+
+    //store data in the database
+    const newMessage = await Message.create({
+      senderId,
+      receiverId,
+      text,
+      image: imageUrl
+    });
+
+    //send response
+    return res.json({ success: true, message: "Message sent successfully", data: newMessage });
+  } catch (error) {
+    console.error("Error sending message:", error.message);
+    return res.json({ success: false, message: error.message || "Internal server error" });
   }
 }
