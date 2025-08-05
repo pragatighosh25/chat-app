@@ -3,6 +3,7 @@ import User from '../models/user.model.js';
 import { generateToken } from '../lib/jwt.js';
 import Message from '../models/messages.model.js';
 import cloudinary from '../lib/cloudinary.js'
+import { io, userSocketMap } from '../server.js';
 
 //get all users except the logged-in user
 
@@ -96,6 +97,12 @@ export const sendMessage = async (req, res) => {
       image: imageUrl
     });
 
+    //emit message to the receiver's socket
+    const receiverSocketId = userSocketMap[receiverId];
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit('getMessage', newMessage);
+    }
+    
     //send response
     return res.json({ success: true, message: "Message sent successfully", data: newMessage });
   } catch (error) {
