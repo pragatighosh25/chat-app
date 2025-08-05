@@ -1,9 +1,9 @@
-//get all users except the logged-in user
-
 import bcrypt from 'bcrypt';
 import User from '../models/user.model.js';
 import { generateToken } from '../lib/jwt.js';
 import Message from '../models/messages.model.js';
+
+//get all users except the logged-in user
 
 export const getUsersForChat = async (req, res) => {
   try {
@@ -54,6 +54,22 @@ export const getMessages = async (req, res) => {
     return res.json({ success: true, messages });
   } catch (error) {
     console.error("Error fetching messages:", error.message);
+    return res.json({ success: false, message: "Internal server error" });
+  }
+}
+
+//Api to mark messages as seen using the message id
+export const markMessagesAsSeen = async (req, res) => {
+  try {
+    const {id}= req.params;
+    await Message.findByIdAndUpdate(
+      id,
+      { seen: true }
+    );
+    
+    return res.json({ success: true, message: "Messages marked as seen" });
+  } catch (error) {
+    console.error("Error marking messages as seen:", error.message);
     return res.json({ success: false, message: "Internal server error" });
   }
 }
