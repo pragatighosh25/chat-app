@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom'
 import Home from './pages/Home.jsx'
 import Login from './pages/Login.jsx'
 import Profile from './pages/Profile.jsx'
+import {Toaster} from 'react-hot-toast'
 
 const App = () => {
   return (
