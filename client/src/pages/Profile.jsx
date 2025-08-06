@@ -1,17 +1,31 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import assets from '../assets/assets';
+import { AuthContext } from '../../context/.jsx';
 
 const Profile = () => {
+  const {authUser, updateProfile} = useContext(AuthContext);
+
   const [selectedImage, setSelectedImage] = useState(null)
   const navigate = useNavigate();
   const [name, setName]= useState('Martin Johnson');
   const [email, setEmail] = useState('martin@example.com');
   const [bio, setBio] = useState('A short bio about Martin.');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate('/'); // Redirect to home after saving profile
+    if(!selectedImage) {
+      await updateProfile({fullname: name, bio});
+    }
+    navigate('/');
+    return; // Redirect to home after saving profile
+  }
+
+  const reader= new FileReader();
+  reader.readAsDataURL(selectedImage);
+  reader.onloadend = async () => {
+    const base64Image = reader.result;
+    await updateProfile({fullname: name, bio, profilePic: base64Image});
   }
 
   return (
