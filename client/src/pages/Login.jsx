@@ -1,27 +1,39 @@
 import React, { useContext, useState } from 'react'
 import assets from '../assets/assets'
-import { AuthContext } from '../../context/AuthContext'
+import { AuthContext } from '../../context/AuthContext.jsx'
+import { useNavigate } from 'react-router-dom'
 
 const Login = () => {
   const [currentState, setCurrentState] = useState('Sign Up')
-  const [fullname, setFullname] = useState('')
+  const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [bio, setBio] = useState('')
   const [isDataSubmitted, setIsDataSubmitted] = useState(false)
 
   const {login} = useContext(AuthContext);
+  const navigate = useNavigate();
+const onSubmitHandler = async (e) => {
+  e.preventDefault();
 
-  const onSubmitHandler = (e) => {
-    e.preventDefault()
-    if (currentState === 'Sign Up' && !isDataSubmitted) {
-      setIsDataSubmitted(true)
-      return;
-    } 
-
-    login(currentState === 'Sign Up' ? 'signup' : 'login', {fullname, email, password, bio})
+  if (currentState === 'Sign Up' && !isDataSubmitted) {
+    setIsDataSubmitted(true);
+    return;
   }
 
+  try {
+    const success = await login(
+      currentState === 'Sign Up' ? 'signup' : 'login',
+      { fullName, email, password, bio }
+    );
+
+    if (success) {
+      navigate('/');
+    }
+  } catch (err) {
+    console.error('Login/signup failed:', err);
+  }
+};
   return (
     <div className='min-h-screen bg-cover flex items-center gap-8 justify-center sm:justify-evenly max-sm:flex-col backdrop-blur-2xl'>
 
@@ -34,7 +46,7 @@ const Login = () => {
           {isDataSubmitted && <img onClick={()=> setIsDataSubmitted(false)} src={assets.arrow_icon} alt="" className='w-5 cursor-pointer' />}
         </h2>
         {currentState === 'Sign Up' && !isDataSubmitted && (
-          <input onChange={(e) => setFullname(e.target.value)} value={fullname}
+          <input onChange={(e) => setFullName(e.target.value)} value={fullName}
           type="text" className='p-2 border border-gray-500 rounded-md focus:outline-none' placeholder='Full Name' required />
         )}
         {!isDataSubmitted && (

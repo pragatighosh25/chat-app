@@ -2,6 +2,7 @@ import { createContext, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
+import { useState } from "react";
 
 const backendUrl= import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 axios.defaults.baseURL = backendUrl;
@@ -33,6 +34,7 @@ export const AuthProvider = ({ children }) => {
   //Login function to handle user autheentication and socket connection
   const login = async (state, credentials) => {
     try {
+      console.log("🚀 Credentials being sent:", credentials);
       const { data } = await axios.post(`api/auth/${state}`, credentials);
       if (data.success) {
         setAuthUser(data.user);
@@ -63,6 +65,7 @@ export const AuthProvider = ({ children }) => {
 
   const updateProfile = async (userData) => {
     try {
+      
       const { data } = await axios.put('api/auth/update-profile', userData);
       if (data.success) {
         setAuthUser(data.user);
@@ -110,6 +113,8 @@ export const AuthProvider = ({ children }) => {
   const value = {
     axios,
     authUser,
+    token,
+    setAuthUser,
     onlineUsers,
     socket,
     login,
