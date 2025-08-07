@@ -2,6 +2,8 @@ import React, { useContext, useState } from 'react'
 import assets from '../assets/assets'
 import { AuthContext } from '../../context/AuthContext.jsx'
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
+import toast from 'react-hot-toast'
 
 const Login = () => {
   const [currentState, setCurrentState] = useState('Sign Up')
@@ -13,27 +15,18 @@ const Login = () => {
 
   const {login} = useContext(AuthContext);
   const navigate = useNavigate();
+
 const onSubmitHandler = async (e) => {
   e.preventDefault();
-
   if (currentState === 'Sign Up' && !isDataSubmitted) {
-    setIsDataSubmitted(true);
-    return;
+  setIsDataSubmitted(true);
+  return;
   }
-
-  try {
-    const success = await login(
+  login(
       currentState === 'Sign Up' ? 'signup' : 'login',
       { fullName, email, password, bio }
     );
-
-    if (success) {
-      navigate('/');
-    }
-  } catch (err) {
-    console.error('Login/signup failed:', err);
   }
-};
   return (
     <div className='min-h-screen bg-cover flex items-center gap-8 justify-center sm:justify-evenly max-sm:flex-col backdrop-blur-2xl'>
 

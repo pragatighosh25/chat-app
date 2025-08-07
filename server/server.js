@@ -11,11 +11,14 @@ import { Server } from 'socket.io';
 const app = express();
 const server = http.createServer(app);
 
+const corsOptions = {
+  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  credentials: true
+};
+
 //initialize socket.io
 export const io = new Server(server, {
-    cors: {
-        origin: "*"
-    }
+    cors: corsOptions,
 });
 
 //store online users
@@ -45,10 +48,9 @@ io.on('connection', (socket)=>{
 
 //middleware
 app.use(express.json({limit: '5mb'}));
-app.use(cors({
-    origin: process.env.CLIENT_URL,
-    credentials: true
-}));
+
+
+app.use(cors(corsOptions));
 
 
 

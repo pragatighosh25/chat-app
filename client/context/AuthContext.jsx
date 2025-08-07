@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
   const checkAuth = async () => {
     if (token) {
       try {
-        const {data} = await axios.get('api/auth/check');
+        const {data} = await axios.get('/api/auth/check');
         if(data.success) {
           setAuthUser(data.user);
           connectSocket(data.user);
@@ -34,8 +34,8 @@ export const AuthProvider = ({ children }) => {
   //Login function to handle user autheentication and socket connection
   const login = async (state, credentials) => {
     try {
-      console.log("🚀 Credentials being sent:", credentials);
-      const { data } = await axios.post(`api/auth/${state}`, credentials);
+      //console.log("🚀 Credentials being sent:", credentials);
+      const { data } = await axios.post(`/api/auth/${state}`, credentials);
       if (data.success) {
         setAuthUser(data.user);
         connectSocket(data.user);
